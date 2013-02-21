@@ -35,4 +35,4 @@ sub setClassifier {
 	$processor->{classifier} = $classifier;
 }
 
-1; #not built yet
+1;
