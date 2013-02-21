@@ -14,7 +14,7 @@ my $null = sub { return ''; };
 sub makeEat($) {
 	my $num = shift;
 	return sub($) {
-		print substr $_[0], 0, $num;
+		print 'ATE:' . substr $_[0], 0, $num;
 		return substr $_[0], $num;
 	};
 }
@@ -23,9 +23,9 @@ sub makeEat($) {
 my $classifier = sub($) {
 	my (@handlers);
 
-	if (/12/) { push (@handlers, makeEat(2)); }
-	if (/STOP/) { push (@handlers, $null); }
-	if (/3/) { push (@handlers, makeEat(1)); }
+	if ($_[0] =~ /12/) { push (@handlers, makeEat(2)); }
+	if ($_[0] =~ /STOP/) { push (@handlers, $null); }
+	if ($_[0] =~ /3/) { push (@handlers, makeEat(1)); }
 
 	return @handlers;
 };
@@ -33,7 +33,7 @@ my $classifier = sub($) {
 # Processor unit tests
 BEGIN { use_ok( 'WarOnError::Processor' ); }
 
-my $processor = Processor->new;
+my $processor = WarOnError::Processor->new;
 
 output_is(sub {$processor->process('1234')}, '', 
 	'No classifiers = no output');
@@ -44,9 +44,9 @@ output_is(sub {$processor->process('')}, '',
 	'Empty message = empty output');
 output_is(sub {$processor->process('.')}, '', 
 	'No classes = empty output');
-output_is(sub {$processor->process('1234')}, '123', 
+output_is(sub {$processor->process('1234')}, 'ATE:12ATE:3', 
 	'Each handler is applied in order');
-output_is(sub {$processor->process('1234')}, '123', 
+output_is(sub {$processor->process('234')}, 'ATE:2', 
 	'Only matched handlers are applied');
-output_is(sub {$processor->process('12STOP34')}, '12', 
+output_is(sub {$processor->process('12STOP34')}, 'ATE:12', 
 	'Handling stops when message is empty');
