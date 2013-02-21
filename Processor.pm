@@ -2,9 +2,6 @@ package WarOnError::Processor;
 
 use warnings;
 use strict;
-use Exporter qw(import);
-
-our @EXPORT_OK = qw(new);
 
 sub new {
 	my $package = $_[0];
