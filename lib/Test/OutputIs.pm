@@ -22,7 +22,7 @@ sub output_is {
 
 	select($old_handle);
 
-	is($expected, ${$add_io->string_ref}, $testName);
+	is(${$add_io->string_ref}, $expected, $testName);
 
 	undef $add_io;
 }
